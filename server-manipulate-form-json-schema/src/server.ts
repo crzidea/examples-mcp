@@ -75,7 +75,7 @@ export async function startMcpServer(transport: StreamableHTTPServerTransport) {
         {
           type: "text",
           text: JSON.stringify(defaultFormTemplate),
-          annotations: "This is a JSON data structure representing the form",
+          // annotations: "This is a JSON data structure representing the form",
         },
       ],
     };
@@ -100,7 +100,7 @@ export async function startMcpServer(transport: StreamableHTTPServerTransport) {
           {
             type: "text",
             text: JSON.stringify(formObject, null, 2),
-            annotations: "This is a JSON data structure representing the form",
+            // annotations: "This is a JSON data structure representing the form",
           },
         ],
       };
