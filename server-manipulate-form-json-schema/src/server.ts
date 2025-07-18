@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
 import { Component, componentDefinitionMap } from "./components.js";
+import * as  packageJson from '../package.json' with { type: "json" };
 
 const defaultFormTemplate: { attributes: {}; children: Component[] } = {
   attributes: {},
@@ -48,8 +49,8 @@ const documentationForComponentList =
 export async function startMcpServer(transport: StreamableHTTPServerTransport) {
   // Create server instance
   const server = new McpServer({
-    name: "manipulate-form-json-schema",
-    version: "1.0.0",
+    name: packageJson.default.name,
+    version: packageJson.default.version,
   });
 
   server.tool(
