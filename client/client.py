@@ -6,6 +6,7 @@ from mcp_use import MCPAgent, MCPClient
 
 # Load environment variables
 load_dotenv()
+MAX_TRUNCATED_RESULT_LENGTH = int(os.environ.get("MAX_RESULT_LENGTH_DISPLAYED", 100))
 
 # Create MCPClient from configuration dictionary
 client = MCPClient.from_config_file(
@@ -25,23 +26,26 @@ async def query():
     print("Enter your prompt (or press Enter to exit):")
     prompt = input()
     if prompt == "":
-        return
+        return True
     
     async for item in agent.stream(prompt):
         if isinstance(item, str):
             # Final result
             print(f"\n✅ Final Result:\n{item}")
-            await query()
+            return False
         else:
             # Intermediate step (action, observation)
             action, observation = item
             print(f"\n🔧 Tool: {action.tool}")
             print(f"📝 Input: {action.tool_input}")
-            print(f"📄 Result: {observation[:100]}{'...' if len(observation) > 100 else ''}")
+            print(f"📄 Result: {observation[:MAX_TRUNCATED_RESULT_LENGTH]}{'...' if len(observation) > MAX_TRUNCATED_RESULT_LENGTH else ''}")
+            # print(f"📄 Result: {observation}")
     
 
 async def main():
-    await query()
+    session_ended = False
+    while not session_ended:
+        session_ended = await query()
     print("\n🎉 Done!")
 
 if __name__ == "__main__":
