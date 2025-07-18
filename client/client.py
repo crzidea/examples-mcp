@@ -19,8 +19,10 @@ if not os.path.exists(config_file_path):
 
 client = MCPClient.from_config_file(config_file_path)
 
+model_name = os.environ.get("MODEL_NAME", "gemini-2.5-flash")
+
 # Create LLM
-llm = init_chat_model("gemini-2.5-pro", model_provider="google_genai")
+llm = init_chat_model(model_name, model_provider="google_genai")
 
 # Create agent with the client
 agent = MCPAgent(llm=llm, client=client, max_steps=30)
@@ -39,7 +41,7 @@ async def query():
     if prompt == "":
         return True
 
-    async for item in agent.stream(prompt):
+    async for item in agent.stream(prompt.strip()):
         if isinstance(item, str):
             # Final result
             print(f"\n✅ Final Result:\n{item}")
