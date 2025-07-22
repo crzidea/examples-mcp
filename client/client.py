@@ -6,7 +6,7 @@ from mcp_use import MCPAgent, MCPClient
 
 # Load environment variables
 load_dotenv()
-MAX_TRUNCATED_RESULT_LENGTH = int(os.environ.get("MAX_RESULT_LENGTH_DISPLAYED", 100))
+MAX_TRUNCATED_RESULT_LENGTH = int(os.environ.get("MAX_TRUNCATED_RESULT_LENGTH", 100))
 
 # Create MCPClient from configuration dictionary
 # if ~/.config/mcp-client exists, use ~/.config/mcp-client/config.json
