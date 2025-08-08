@@ -99,6 +99,13 @@ export async function startMcpServer(transport: StreamableHTTPServerTransport) {
       component_position: z.number().describe("The position of the component").optional(),
     },
     async ({ original_json, component_name, component_type, component_properties, component_parent, component_position }) => {
+      if (component_properties.children && component_properties.children.length > 0) {
+        throw new Error("`children` property must be an empty array. If you want to add child, use the `add_component` tool again.");
+      }
+      if (component_properties.children_template) {
+        throw new Error("`children_template` property must be added by `add_children_template` tool.");
+      }
+
       const json = JSON.parse(original_json);
       if (!json.components) {
         json.components = [];
@@ -142,6 +149,49 @@ export async function startMcpServer(transport: StreamableHTTPServerTransport) {
             mimeType: "application/json",
             text: JSON.stringify(json, null, 2),
           },
+        ],
+      };
+    }
+  );
+
+  server.tool(
+    "add_children_template",
+    "Add a children template to a component",
+    {
+      original_json: z.string().describe("The original JSON schema"),
+      children_template_name: z.string().describe("The name of the children template"),
+      children_template_type: z.string().describe("The type of the children template"),
+      children_template_properties: z.record(z.string(), z.any()).describe("The properties of the children template"),
+      component_parent: z.number().describe("The parent of the children template"),
+    },
+    async ({ original_json, children_template_name, children_template_type, children_template_properties, component_parent }) => {
+      const json = JSON.parse(original_json);
+      if (!json.components) {
+        json.components = [];
+      }
+      json.max_id = json.max_id || 0;
+      json.max_id++;
+      const children_template: Component = {
+        id: json.max_id,
+        name: children_template_name,
+        type: children_template_type,
+      };
+      for (const property of Object.keys(children_template_properties)) {
+        children_template[property] = children_template_properties[property];
+      }
+      const parent = findComponent(json.components, component_parent);
+      if (!parent) {
+        throw new Error(`Parent component ${component_parent} not found`);
+      }
+      parent.children_template = children_template;
+
+      return {
+        content: [
+          {
+            type: "text",
+            mimeType: "application/json",
+            text: JSON.stringify(json, null, 2),
+          }
         ],
       };
     }

@@ -54,20 +54,25 @@ Using the YAML understanding of UI components, use the `add_component` MCP tool 
 
 For container components (e.g., headers, sections, action bars):
 
-1. **Call `add_component`** to create the container component with `children` field in `component_properties` param
+1. **Call `add_component`** to create the container component with a `children` field set to an empty array (`[]`) in the `component_properties` param
 2. **Check the `id`** returned in the tool response - this identifies the container
 3. **Call `add_component` repeatedly** with `component_parent` param to add child components
    - Set `component_parent` to the `id` from step 2
    - Each call adds one child component to the container
+   - Do not pre-populate `children` on creation beyond `[]`; always add children via subsequent `add_component` calls
 
 #### How to Create a List Component:
 
 For list/collection components (e.g., card grids, item lists):
 
-1. **Call `add_component`** to create the list component with `children_template` field in `component_properties` param
-2. **Check the `children_template.id`** returned in the tool response - this identifies the template
-3. **Call `add_component` repeatedly** with `component_parent` param to add components to the template
-   - Set `component_parent` to the `children_template.id` from step 2
+1. **Call `add_component`** to create the list component. Do NOT include `children_template` in `component_properties`.
+2. **Call `add_children_template`** to attach the template to the list component
+   - Provide `children_template_name`, `children_template_type`, and `children_template_properties`
+   - In `children_template_properties`, set `children: []`
+   - Set `component_parent` to the list component's `id`
+3. **Check the `children_template.id`** returned in the tool response - this identifies the template
+4. **Call `add_component` repeatedly** with `component_parent` param to add components to the template
+   - Set `component_parent` to the `children_template.id` from step 3
    - Each call adds one component to the template structure
 
 ### General Component Addition Guidelines:
@@ -84,6 +89,15 @@ For list/collection components (e.g., card grids, item lists):
 - Follow the appropriate workflow (container vs. list) for hierarchical components
 - Let the tool build the JSON schema incrementally
 - The tool will return the updated JSON schema after each component addition
+ 
+**Children Handling Rule**:
+- When creating any component that can have children, always set `children: []` in `component_properties` during the creation call
+- To add actual children, call `add_component` again with `component_parent` set to the parent component's `id`, once per child component
+
+**Children Template Handling Rule**:
+- Never include `children_template` inside `component_properties` when calling `add_component` (this will fail). Use `add_children_template` instead.
+- When creating a `children_template` with `add_children_template`, set `children: []` in `children_template_properties` during creation.
+- To add components under the template, call `add_component` with `component_parent` set to the `children_template.id`, once per child component.
 
 ## Step 4: Present Final JSON Schema
 
