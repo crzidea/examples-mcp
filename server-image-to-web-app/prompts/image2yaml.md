@@ -117,7 +117,8 @@ ui_components:
 - **Avoid value fields**: No actual data values in YAML structure
 
 ### Common Component Types:
-- **Containers**: `header_section`, `card_grid`, `action_bar`, `sidebar`
+- **Normal Containers**: `header_section`, `action_bar`, `sidebar`, `form_section`
+- **List Containers**: `card_grid`, `item_list`, `data_table`, `gallery_grid`
 - **Interactive**: `primary_button`, `secondary_button`, `dropdown`, `text_field`
 - **Display**: `heading`, `text_display`, `status_badge`, `avatar`
 - **Navigation**: `tab_bar`, `breadcrumb`, `pagination`
