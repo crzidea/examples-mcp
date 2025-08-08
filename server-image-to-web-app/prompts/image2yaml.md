@@ -16,7 +16,7 @@ Your analysis must adhere to the following constraints:
       * **`label`**: A static string value for the component's text content, if applicable (e.g., `"Submit"`, `"Home"`).
       * **`field_name`**: Reference to local data source for dynamic content (e.g., `"user_name"`, `"task_list"`).
       * **`state`**: The current state of the component, if discernible (e.g., `active`, `disabled`, `default`).
-      * **`properties`**: A nested dictionary for other relevant attributes. For container components, this should contain a list of its child components.
+      * **`properties`**: A nested dictionary for other relevant attributes. For container components (not list components), use `children` for child components. For list components, use `children_template` for the template structure.
 4.  **Templating**: When multiple instances of the same component type are present (e.g., a list of cards or form fields), provide only a single, templated example. Do not list every instance. Use static string values for `title` and `label` fields. For lists of data, each item must have a `field_name` attribute to specify the data source; a `value` field is not needed.
 
 ## Key Data Binding Concepts
@@ -24,7 +24,8 @@ Your analysis must adhere to the following constraints:
 - **`label`**: Static text that doesn't change (e.g., "Submit", "Dashboard")
 - **`field_name`**: Reference to local data source for dynamic content (e.g., "user_name", "task_list")
 - **`value`**: NOT included in YAML - populated at runtime from `field_name` source
-- **`children`**: Nested components within container elements
+- **`children`**: Nested components within container elements (NOT used for list components)
+- **`children_template`**: Template object for repeated child components in listing/collection components
 - **`template`**: Indicates a component pattern for repeated elements
 
 ## YAML Structure Template
@@ -36,10 +37,15 @@ ui_components:
     label: [static_text_content_if_applicable]
     field_name: [data_source_reference_for_dynamic_content]
     state: [component_state]
-    children:
+    children:  # Only for container components, NOT list components
       - component_name: [child_component_name]
         type: [child_component_type]
         field_name: [child_data_source]
+    # For list/collection components, use children_template instead:
+    children_template:
+      component_name: [template_component_name]
+      type: [template_component_type]
+      field_name: [template_data_source]
 ```
 
 ## Comprehensive Example
@@ -63,20 +69,19 @@ ui_components:
     type: card_grid
     layout: "2x3"
     field_name: "tasks"
-    children:
-      - component_name: task_card
-        type: task_card
-        template: true
-        children:
-          - component_name: task_title
-            type: heading
-            field_name: "title"
-          - component_name: task_status
-            type: status_badge
-            field_name: "status"
-          - component_name: view_button
-            type: secondary_button
-            label: "View Details"
+    children_template:
+      component_name: task_card
+      type: task_card
+      children:
+        - component_name: task_title
+          type: heading
+          field_name: "title"
+        - component_name: task_status
+          type: status_badge
+          field_name: "status"
+        - component_name: view_button
+          type: secondary_button
+          label: "View Details"
             
   - component_name: quick_actions
     type: action_bar
