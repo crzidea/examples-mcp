@@ -67,6 +67,24 @@ export async function startMcpServer(transport: StreamableHTTPServerTransport) {
     }
   );
 
+  server.tool(
+    "save_example_html",
+    "Save example HTML",
+    {
+      html: z.string(),
+    },
+    async ({ html }) => {
+      await fs.writeFile(path.resolve(rootPath, 'output/example.html'), html);
+      return {
+        content: [
+          {
+            type: "text",
+            text: "HTML saved",
+          },
+        ],
+      };
+    }
+  );
   // Start the server
   await server.connect(transport);
   return server
