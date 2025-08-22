@@ -1,0 +1,7 @@
+---
+description: Language
+globs: **/*
+alwaysApply: true
+---
+
+Please always use English.
