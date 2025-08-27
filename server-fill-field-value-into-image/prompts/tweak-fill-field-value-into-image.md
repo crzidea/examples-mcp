@@ -12,6 +12,8 @@ Improve the original prompt in `fill-field-value-into-image.md` by analyzing dis
    - Identify visual differences, such as layout mismatches, font issues, color discrepancies, positioning errors, or any other rendering problems.
    - Note any missing or incorrectly placed field values.
    - Consider aspects like image dimensions, HTML structure integrity, and printability to PDF.
+   
+   - **Do not use the original image as a background image in the generated HTML.** The original image must be reproduced using HTML/CSS elements (images should be converted into HTML structure where text and shapes are recreated using HTML elements whenever possible).
 
 2. **Identify Prompt Issues**:
    - Determine how the current prompt in `fill-field-value-into-image.md` contributes to these discrepancies.
